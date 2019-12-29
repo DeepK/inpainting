@@ -1,7 +1,7 @@
 import os
 from sklearn.model_selection import train_test_split
 
-def windowed_scan_gen_xaxis(img, x_window_dim, seg = None):
+def windowed_scan_gen_xaxis(img, x_window_dim, extra = None):
     """
     Split the image row-wise (horizontally)
     This works for BRATS data as the brain is roughly symmetric and therefore the
@@ -10,11 +10,11 @@ def windowed_scan_gen_xaxis(img, x_window_dim, seg = None):
     """
     start_x = 0
     while start_x < img.shape[0]:
-        if seg is None:
+        if extra is None:
             yield img[start_x: min(start_x + x_window_dim, img.shape[0])]
         else:
             yield (img[start_x: min(start_x + x_window_dim, img.shape[0])],\
-                seg[start_x: min(start_x + x_window_dim, img.shape[0])])
+                extra[start_x: min(start_x + x_window_dim, img.shape[0])])
         start_x = start_x + x_window_dim
 
 def get_flair_file_names(parent_brats_dir):

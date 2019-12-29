@@ -6,36 +6,27 @@ from keras.optimizers import Adam
 from keras import callbacks
 
 from unet import DICTAVAILNETWORKS3D
-from reader import get_generators
+from inpaint_reader import get_generators
 from utilities import traintestvalid_split5, get_flair_file_names
-from losses import dice_coef_loss
+from losses import masked_mse
 
 split_number = 1
 
 model = DICTAVAILNETWORKS3D((80, 216, 128), 'Unet3D_Shallow_Batchnorm').getModel()
-a = Adam(lr=0.01)
-model.compile(optimizer= a, loss = dice_coef_loss)
+a = Adam(lr=0.001)
+model.compile(optimizer= a, loss = "mse")
 print (model.summary())
 
 brats_parent = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/"
-flair_names, seg_names = get_flair_file_names(brats_parent)
-train_flair_names, _, valid_flair_names, _, _, _ = traintestvalid_split5(flair_names, seg_names)[split_number]
-steps_per_epoch = len(train_flair_names)*2
-validation_steps = len(valid_flair_names)*2
+train_gen, valid_gen = get_generators(brats_parent, split_number = split_number)
 
-train_gen, test_gen, valid_gen = get_generators(brats_parent, split_number = split_number)
-
-save_path = "../models/vanilla_unet/"
+save_path = "../models/inpainter_unet/"
 os.makedirs(save_path, exist_ok = True)
 save_best_model = callbacks.ModelCheckpoint(save_path + "weights%s.h5"%split_number, monitor='val_loss',\
                                               verbose=1, save_best_only=True, mode='min')
 
-history = model.fit_generator(train_gen,\
-					steps_per_epoch = steps_per_epoch,\
-					epochs = 100,\
-					validation_data = valid_gen,\
-					validation_steps = validation_steps,\
-					shuffle = True,
+history = model.fit_generator(train_gen, steps_per_epoch = 1584, epochs = 50,\
+					validation_data = valid_gen, validation_steps = 244, shuffle = True,\
 					callbacks = [save_best_model])
 
 import pickle

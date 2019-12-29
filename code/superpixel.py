@@ -4,6 +4,7 @@ subhradeep.kayal@gmail.com
 Erasmus MC
 """
 from skimage import segmentation
+from utilities import get_flair_file_names
 
 def get_superpixel_labels(img):
 	label = segmentation.slic(img, n_segments = 2000, compactness = 0.25, multichannel = False)
