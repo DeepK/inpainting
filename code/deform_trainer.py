@@ -6,7 +6,7 @@ from keras.optimizers import Adam
 from keras import callbacks
 
 from unet import DICTAVAILNETWORKS3D
-from inpaint_reader import get_generators
+from deform_reader import get_generators
 
 split_number = 1
 
@@ -18,13 +18,13 @@ print (model.summary())
 brats_parent = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/"
 train_gen, valid_gen = get_generators(brats_parent, split_number = split_number)
 
-save_path = "../models/inpainter_unet/"
+save_path = "../models/deform-unet/"
 os.makedirs(save_path, exist_ok = True)
 save_best_model = callbacks.ModelCheckpoint(save_path + "weights%s.h5"%split_number, monitor='val_loss',\
                                               verbose=1, save_best_only=True, mode='min')
 
-history = model.fit_generator(train_gen, steps_per_epoch = 1584, epochs = 50,\
-					validation_data = valid_gen, validation_steps = 244, shuffle = True,\
+history = model.fit_generator(train_gen, steps_per_epoch = 1510, epochs = 50,\
+					validation_data = valid_gen, validation_steps = 270, shuffle = True,\
 					callbacks = [save_best_model])
 
 import pickle

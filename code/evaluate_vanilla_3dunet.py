@@ -20,4 +20,3 @@ for img, seg in test_gen:
 	dices.append(d)
 
 print (np.mean(dices))
-print (np.mean(dices))
