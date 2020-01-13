@@ -8,7 +8,7 @@ import numpy
 import cv2
 
 import os
-from utilities import get_flair_file_names, traintestvalid_split5, windowed_scan_gen_xaxis
+from utilities import get_flair_file_names, traintestvalid_split5
 
 def get_scan(filepath):
     img = nib.load(filepath).get_fdata()
@@ -30,22 +30,34 @@ def __get_generator(brats_parent, flair_names, seg_names, is_test = False):
             flair_img = cv2.normalize(flair_img, None, 255.0, 0.0, cv2.NORM_MINMAX)
             flair_img = flair_img/255.0
 
+            t1ce = flair.replace("flair", "t1ce")
+            t1ce_img = get_scan(os.path.join(brats_parent, t1ce))
+            t1ce_img = cv2.normalize(t1ce_img, None, 255.0, 0.0, cv2.NORM_MINMAX)
+            t1ce_img = t1ce_img/255.0
+
+            t2 = flair.replace("flair", "t2")
+            t2_img = get_scan(os.path.join(brats_parent, t2))
+            t2_img = cv2.normalize(t2_img, None, 255.0, 0.0, cv2.NORM_MINMAX)
+            t2_img = t2_img/255.0
+
             seg_img = get_scan(os.path.join(brats_parent, seg))
 
             # crop near the center where the brain image is located
             # 160 x 216 x 128
             flair_img = flair_img[40:200, 12:228, 11:139]
+            t1ce_img = t1ce_img[40:200, 12:228, 11:139]
+            t2_img = t2_img[40:200, 12:228, 11:139]
             seg_img = seg_img[40:200, 12:228, 11:139]
             seg_img[seg_img >= 1] = 1
 
-            for tup in windowed_scan_gen_xaxis(flair_img, 80, seg_img):
-                flair_img_w = tup[0]
-                seg_img_w = tup[1]
-                s = flair_img_w.shape
-                flair_img_w = numpy.reshape(flair_img_w, (1, s[0], s[1], s[2], 1))
-                seg_img_w = numpy.reshape(seg_img_w, (1, s[0], s[1], s[2], 1))
+            s = flair_img.shape
+            flair_img = numpy.reshape(flair_img, (1, s[0], s[1], s[2], 1))
+            t1ce_img = numpy.reshape(t1ce_img, (1, s[0], s[1], s[2], 1))
+            t2_img = numpy.reshape(t2_img, (1, s[0], s[1], s[2], 1))
+            overall = numpy.concatenate((flair_img, t1ce_img, t2_img), axis = -1)
+            seg_img = numpy.reshape(seg_img, (1, s[0], s[1], s[2], 1))
 
-                yield flair_img_w, seg_img_w
+            yield overall, seg_img
 
         if is_test:
             break

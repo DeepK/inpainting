@@ -13,6 +13,7 @@ from losses import dice_coef_loss
 split_number = 1
 
 model = DICTAVAILNETWORKS3D((160, 216, 128), 'Unet3D_Shallow_Batchnorm').getModel()
+model.load_weights('../models/inpainter_unet/weights1.h5')
 a = Adam(lr=1e-4)
 model.compile(optimizer= a, loss = dice_coef_loss)
 print (model.summary())
@@ -25,14 +26,14 @@ validation_steps = len(valid_flair_names)
 
 train_gen, test_gen, valid_gen = get_generators(brats_parent, split_number = split_number)
 
-save_path = "../models/vanilla_unet/"
+save_path = "../models/inpainter_unet_finetuned/"
 os.makedirs(save_path, exist_ok = True)
 save_best_model = callbacks.ModelCheckpoint(save_path + "weights%s.h5"%split_number, monitor='val_loss',\
                                               verbose=1, save_best_only=True, mode='min')
 
 history = model.fit_generator(train_gen,\
 					steps_per_epoch = steps_per_epoch,\
-					epochs = 150,\
+					epochs = 200,\
 					validation_data = valid_gen,\
 					validation_steps = validation_steps,\
 					shuffle = True,

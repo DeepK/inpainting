@@ -314,7 +314,7 @@ class Unet3D_General(NeuralNetwork):
 
 
     def getModel(self):
-        inputs = Input(shape=self.size_image + (1,))
+        inputs = Input(shape=self.size_image + (3,))
 
         # ********** DOWNSAMPLING PATH **********
         last_layer = inputs

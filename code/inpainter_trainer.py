@@ -10,8 +10,8 @@ from inpaint_reader import get_generators
 
 split_number = 1
 
-model = DICTAVAILNETWORKS3D((80, 216, 128), 'Unet3D_Shallow_Batchnorm').getModel()
-a = Adam(lr=0.001)
+model = DICTAVAILNETWORKS3D((160, 216, 128), 'Unet3D_Shallow_Batchnorm').getModel()
+a = Adam(lr=1e-4)
 model.compile(optimizer= a, loss = "mse")
 print (model.summary())
 
@@ -23,8 +23,8 @@ os.makedirs(save_path, exist_ok = True)
 save_best_model = callbacks.ModelCheckpoint(save_path + "weights%s.h5"%split_number, monitor='val_loss',\
                                               verbose=1, save_best_only=True, mode='min')
 
-history = model.fit_generator(train_gen, steps_per_epoch = 1584, epochs = 50,\
-					validation_data = valid_gen, validation_steps = 244, shuffle = True,\
+history = model.fit_generator(train_gen, steps_per_epoch = 1584/2, epochs = 50,\
+					validation_data = valid_gen, validation_steps = 244/2, shuffle = True,\
 					callbacks = [save_best_model])
 
 import pickle

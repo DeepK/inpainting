@@ -2,7 +2,7 @@ from superpixel import get_superpixel_labels
 
 import os
 from reader import get_scan
-from utilities import get_flair_file_names, windowed_scan_gen_xaxis, traintestvalid_split5
+from utilities import get_flair_file_names, traintestvalid_split5
 import pickle
 import numpy
 from copy import deepcopy
@@ -59,14 +59,11 @@ def inpainter_generator(brats_parent, flair_names, seg_names, for_nn = True):
             superpixel = pickle.load(open(os.path.join("../superpixels", superpixel_filename + ".p"), "rb"))
 
             for flair_centered, flair_inp in inpaint_one(flair_img, seg_img, superpixel):
-                for tup in windowed_scan_gen_xaxis(flair_centered, 80, flair_inp):
-                    flair_img_w = tup[0]
-                    inpainted_img_w = tup[1]
-                    s = flair_img_w.shape
-                    flair_img_w = numpy.reshape(flair_img_w, (1, s[0], s[1], s[2], 1))
-                    inpainted_img_w = numpy.reshape(inpainted_img_w, (1, s[0], s[1], s[2], 1))
+                s = flair_centered.shape
+                flair_centered = numpy.reshape(flair_centered, (1, s[0], s[1], s[2], 1))
+                flair_inp = numpy.reshape(flair_inp, (1, s[0], s[1], s[2], 1))
 
-                    yield inpainted_img_w, flair_img_w
+                yield flair_inp, flair_centered
 
         # a backdoor, to break out of the while True
         # in case we are not using this for keras fit_generator
