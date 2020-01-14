@@ -63,6 +63,7 @@ def __get_generator(brats_parent, flair_names, seg_names, is_test = False):
             break
 
 if __name__ == "__main__":
-    fpath = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/Brats18_TCIA02_222_1/Brats18_TCIA02_222_1_flair.nii.gz"
+    fpath = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/Brats18_2013_10_1/Brats18_2013_10_1_seg.nii.gz"
     img = get_scan(fpath)
-    print (img.shape)
+    for i in range(img.shape[2]):
+        print (i, numpy.unique(img[:, :, i]))

@@ -2,10 +2,14 @@ import numpy as np
 from keras import backend as K
 
 
-# Dice coefficients:
+# Custom dice coefficient
 def dice_coef(y_true, y_pred):
+  mask = K.cast(K.tf.count_nonzero(y_true, [0,1,2]), K.floatx()) # -> of size len(z-axis), having 0 if a slice has only 0s
+  mask_binary = K.cast(K.not_equal(mask, 0.0), K.floatx()) # boolean tensor, having 0 if a slice has only 0s
+
+  # the usual dice loss
   y_true_f = K.flatten(y_true)
-  y_pred_f = K.flatten(y_pred)
+  y_pred_f = K.flatten(y_pred * mask_binary)
   intersection = K.sum(y_true_f * y_pred_f)
   return (2. * intersection + 1) / (K.sum(y_true_f) + K.sum(y_pred_f) + 1)
 
