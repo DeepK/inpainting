@@ -12,8 +12,8 @@ from losses import dice_coef_loss
 
 split_number = 1
 
-model = DICTAVAILNETWORKS3D((160, 216, 128), 'Unet3D_Shallow_Batchnorm').getModel()
-a = Adam(lr=1e-4)
+model = DICTAVAILNETWORKS3D((160, 224, 128), 'Unet3D_Batchnorm').getModel()
+a = Adam(lr=5e-5)
 model.compile(optimizer= a, loss = dice_coef_loss)
 print (model.summary())
 
@@ -32,7 +32,7 @@ save_best_model = callbacks.ModelCheckpoint(save_path + "weights%s.h5"%split_num
 
 history = model.fit_generator(train_gen,\
 					steps_per_epoch = steps_per_epoch,\
-					epochs = 150,\
+					epochs = 200,\
 					validation_data = valid_gen,\
 					validation_steps = validation_steps,\
 					shuffle = True,

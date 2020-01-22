@@ -44,10 +44,10 @@ def __get_generator(brats_parent, flair_names, seg_names, is_test = False):
 
             # crop near the center where the brain image is located
             # 160 x 216 x 128
-            flair_img = flair_img[40:200, 12:228, 11:139]
-            t1ce_img = t1ce_img[40:200, 12:228, 11:139]
-            t2_img = t2_img[40:200, 12:228, 11:139]
-            seg_img = seg_img[40:200, 12:228, 11:139]
+            flair_img = flair_img[40:200, 8:232, 11:139]
+            t1ce_img = t1ce_img[40:200, 8:232, 11:139]
+            t2_img = t2_img[40:200, 8:232, 11:139]
+            seg_img = seg_img[40:200, 8:232, 11:139]
             seg_img[seg_img >= 1] = 1
 
             s = flair_img.shape

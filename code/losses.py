@@ -16,6 +16,9 @@ def dice_coef(y_true, y_pred):
 def dice_coef_np(y_true, y_pred):
   y_true = np.asarray(y_true)
   y_pred = np.asarray(y_pred)
+  for i in range(y_true.shape[3]):
+    if np.count_nonzero(y_true[:,:,:,i,:]) == 0:
+      y_pred[:,:,:,i,:] = 0.
   y_true_f = y_true.flatten()
   y_pred_f = y_pred.flatten()
   intersection = np.sum(y_true_f * y_pred_f)
