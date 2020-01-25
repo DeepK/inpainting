@@ -45,7 +45,8 @@ class Unet3D_General(NeuralNetwork):
                  activation_output=activation_output_default,
                  isDropout=False,
                  dropout_rate=dropout_rate_default,
-                 isBatchNormalize=False):
+                 isBatchNormalize=False,
+                 num_out_filters = 1):
 
         self.size_image                     = size_image
         self.num_layers_depth               = num_layers_depth
@@ -61,6 +62,7 @@ class Unet3D_General(NeuralNetwork):
         self.isDropout                      = isDropout
         self.dropout_rate                   = dropout_rate
         self.isBatchNormalize               = isBatchNormalize
+        self.num_out_filters                = num_out_filters
 
 
     @staticmethod
@@ -314,7 +316,7 @@ class Unet3D_General(NeuralNetwork):
 
 
     def getModel(self):
-        inputs = Input(shape=self.size_image + (3,))
+        inputs = Input(shape=self.size_image + (2,))
 
         # ********** DOWNSAMPLING PATH **********
         last_layer = inputs
@@ -394,7 +396,7 @@ class Unet3D_General(NeuralNetwork):
         #endfor
         #  ********** UPSAMPLING PATH **********
 
-        outputs = Conv3D(filters=1,
+        outputs = Conv3D(filters=self.num_out_filters,
                                 kernel_size=(1, 1, 1),
                                 padding=self.type_padding,
                                 activation=self.activation_output)(last_layer)
@@ -417,6 +419,8 @@ def DICTAVAILNETWORKS3D(size_image, option):
         return Unet3D_General(size_image, num_layers_depth=3, isDropout=True)
     elif (option=='Unet3D_Shallow_Batchnorm'):
         return Unet3D_General(size_image, num_layers_depth=3, isBatchNormalize=True)
+    elif (option=='Unet3D_Shallow_Batchnorm_2Channel'):
+        return Unet3D_General(size_image, num_layers_depth=3, isBatchNormalize=True, num_out_filters = 2)
     else:
         return NotImplemented
 

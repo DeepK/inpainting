@@ -5,7 +5,7 @@ from losses import dice_coef_np
 import numpy as np
 from matplotlib import pyplot as plt
 
-model = DICTAVAILNETWORKS3D((160, 216, 128), 'Unet3D_Shallow_Batchnorm').getModel()
+model = DICTAVAILNETWORKS3D((160, 224, 32), 'Unet3D_Batchnorm').getModel()
 model.load_weights('../models/vanilla_unet/weights1.h5')
 
 brats_parent = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/"

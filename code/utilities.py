@@ -1,24 +1,11 @@
 import os
 from sklearn.model_selection import train_test_split
+import cv2
 
-def windowed_scan_gen_xaxis(img, x_window_dim, extra = None):
-    """
-    Split the image row-wise (horizontally)
-    This works for BRATS data as the brain is roughly symmetric and therefore the
-    split can be made horizontally. Needs rewriting if we need to make
-    this windowing generic
-    """
-    start_x = 0
-    while start_x < img.shape[0]:
-        if extra is None:
-            yield img[start_x: min(start_x + x_window_dim, img.shape[0])]
-        else:
-            yield (img[start_x: min(start_x + x_window_dim, img.shape[0])],\
-                extra[start_x: min(start_x + x_window_dim, img.shape[0])])
-        start_x = start_x + x_window_dim
+from config import *
 
-def get_flair_file_names(parent_brats_dir):
-    names = os.listdir(parent_brats_dir)
+def get_flair_file_names():
+    names = os.listdir(BRATS_PARENT)
     flair_names = [n + "/" + n + "_flair.nii.gz" for n in names]
     seg_names = [n + "/" + n + "_seg.nii.gz" for n in names]
     return flair_names, seg_names
@@ -40,6 +27,14 @@ def traintestvalid_split5(flair_names, seg_names):
 
     return train_test_splits
 
+def normalize(img):
+    img = cv2.normalize(img, None, 255.0, 0.0, cv2.NORM_MINMAX)
+    img = img/255.0
+    return img
+
+def crop_resample_img(img):
+    return (img[40:200, 12:228, ::4])[:,:,:32]
+
 if __name__ == "__main__":
     from reader import get_scan
     fpath = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/Brats18_TCIA02_222_1/Brats18_TCIA02_222_1_flair.nii.gz"
@@ -57,8 +52,7 @@ if __name__ == "__main__":
             plt.axis("off")
             plt.show()
 
-    brats_parent = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/"
-    flair_names, seg_names = get_flair_file_names(brats_parent)
+    flair_names, seg_names = get_flair_file_names()
     train_test_splits = traintestvalid_split5(flair_names, seg_names)
     print (len(train_test_splits[1][0]),\
            len(train_test_splits[1][1]),\
