@@ -6,7 +6,7 @@ import sys
 from keras.optimizers import Adam
 from keras import callbacks
 
-from unet import DICTAVAILNETWORKS3D
+from unet_utils import get_model
 from reader import get_generators
 from utilities import traintestvalid_split5, get_flair_file_names
 from losses import dice_coef_loss
@@ -15,12 +15,20 @@ from config import *
 unet_path = sys.argv[1]
 epochs = int(sys.argv[2])
 lr = float(sys.argv[3])
+pretrain_type = int(sys.argv[4])
+
+pretrain_model_path = None
+if pretrain_type == 1: # ROI + superpixel
+	pretrain_model_path = "../models/inpainter_unet_True/weights{}.h5"
+elif pretrain_type == 2: # no ROI + superpixel
+	pretrain_model_path = "../models/inpainter_unet_False/weights{}.h5"
 
 batchsize = 5
 
-for split_number in range(1,6):
-
-	model = DICTAVAILNETWORKS3D(SIZE_OF_IMAGE, UNET_TYPE).getModel()
+for split_number in range(1,2):
+	if pretrain_model_path is not None:
+		pretrain_model_path = pretrain_model_path.format(split_number)
+	model = get_model(pretrain_model_path)
 	a = Adam(lr=lr)
 	model.compile(optimizer= a, loss = dice_coef_loss)
 

@@ -7,23 +7,23 @@ import nibabel as nib
 import numpy
 import os
 
-from utilities import get_flair_file_names, traintestvalid_split5, normalize, crop_resample_img
+from utilities import get_flair_file_names, traintestvalid_split5, normalize, crop_resample_img, show_an_image_slice
 from config import *
 
 def get_scan(filepath):
     img = nib.load(filepath).get_fdata()
     return img
 
-def get_generators(batch_size = 1, split_number = 1):
+def get_generators(batch_size = 1, split_number = 1, debug = False, to_count = False):
     flair_names, seg_names = get_flair_file_names()
     train_flair_names, test_flair_names, valid_flair_names,\
     train_seg_names, test_seg_names, valid_seg_names = traintestvalid_split5(flair_names, seg_names)[split_number]
 
-    return __get_generator(train_flair_names, train_seg_names, batch_size),\
-           __get_generator(test_flair_names, test_seg_names, 1, True),\
-           __get_generator(valid_flair_names, valid_seg_names, batch_size)
+    return __get_generator(train_flair_names, train_seg_names, batch_size, debug, False, to_count),\
+           __get_generator(test_flair_names, test_seg_names, 1, False, True, False),\
+           __get_generator(valid_flair_names, valid_seg_names, batch_size, debug, False, to_count)
 
-def __get_generator(flair_names, seg_names, batch_size, is_test = False):
+def __get_generator(flair_names, seg_names, batch_size, debug, is_test, to_count):
     while True:
         batched_overall = []
         batched_seg = []
@@ -37,6 +37,11 @@ def __get_generator(flair_names, seg_names, batch_size, is_test = False):
             seg_img = get_scan(os.path.join(BRATS_PARENT, seg))
             seg_img = crop_resample_img(seg_img)
             seg_img[seg_img >= 1] = 1
+
+            if debug:
+                show_an_image_slice(flair_img, "flair original")
+                show_an_image_slice(t1ce_img, "t1ce original")
+                show_an_image_slice(seg_img, "segmentation original")
 
             s = flair_img.shape
             flair_img = numpy.reshape(flair_img, (1, s[0], s[1], s[2], 1))
@@ -55,7 +60,7 @@ def __get_generator(flair_names, seg_names, batch_size, is_test = False):
         if len(batched_overall) != 0:
             yield numpy.concatenate(batched_overall, axis = 0), numpy.concatenate(batched_seg, axis = 0)
 
-        if is_test:
+        if is_test | to_count:
             break
 
 if __name__ == "__main__":

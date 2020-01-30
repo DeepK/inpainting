@@ -1,6 +1,7 @@
 import os
 from sklearn.model_selection import train_test_split
 import cv2
+from matplotlib import pyplot as plt
 
 from config import *
 
@@ -35,12 +36,17 @@ def normalize(img):
 def crop_resample_img(img):
     return (img[40:200, 12:228, ::4])[:,:,:32]
 
+def show_an_image_slice(img, name):
+    fig = plt.figure(name)
+    ax = fig.add_subplot(1, 1, 1)
+    ax.imshow(img[:, :, 18], interpolation = "nearest")
+    plt.axis("off")
+    plt.show()
+
 if __name__ == "__main__":
     from reader import get_scan
     fpath = "/home/kayald/Code/inpainting-pretraining/MICCAI_BraTS_2018_Data_Training/HGG/Brats18_TCIA02_222_1/Brats18_TCIA02_222_1_flair.nii.gz"
     img = get_scan(fpath)
-    
-    from matplotlib import pyplot as plt
     
     img = img[40:200, 40:200, :]
     
