@@ -1,7 +1,11 @@
+import random
+random.seed(42)
 import os
 from sklearn.model_selection import train_test_split
 import cv2
 from matplotlib import pyplot as plt
+import numpy
+numpy.random.seed(42)
 
 from config import *
 
@@ -42,6 +46,16 @@ def show_an_image_slice(img, name):
     ax.imshow(img[:, :, 18], interpolation = "nearest")
     plt.axis("off")
     plt.show()
+
+def overlay_grid(img_shape):
+    grid_size_random = numpy.random.randint(MIN_GRID_SIZE, MAX_GRID_SIZE)
+    label = 1
+    labels = numpy.zeros(img_shape)
+    for i in range(0, img_shape[0], grid_size_random):
+        for j in range(0, img_shape[1], grid_size_random):
+            labels[i:i+grid_size_random, j:j+grid_size_random, :] = label
+            label += 1
+    return labels
 
 if __name__ == "__main__":
     from reader import get_scan

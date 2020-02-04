@@ -3,3 +3,5 @@ MICCAI*
 models
 superpixels
 deformed
+*.pyc
+*.txt
