@@ -41,9 +41,10 @@ def crop_resample_img(img):
     return (img[40:200, 12:228, ::4])[:,:,:32]
 
 def show_an_image_slice(img, name):
+    z = img.shape[2]
     fig = plt.figure(name)
     ax = fig.add_subplot(1, 1, 1)
-    ax.imshow(img[:, :, 18], interpolation = "nearest")
+    ax.imshow(img[:, :, int(z/2)], interpolation = "nearest")
     plt.axis("off")
     plt.show()
 

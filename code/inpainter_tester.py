@@ -10,7 +10,7 @@ from utilities import show_an_image_slice
 
 unet_path = "../models/inpainter_unet_roi_superpixel/"
 model = DICTAVAILNETWORKS3D(SIZE_OF_IMAGE, INPAINTER_UNET).getModel()
-model.load_weights(os.path.join(unet_path, "weights{}.h5".format(1)))
+model.load_weights(os.path.join(unet_path, "weights1.h5"))
 
 train_gen, valid_gen = get_inpainter_generators(batch_size = 1, split_number = 1,\
     with_roi = True, with_superpixel = True)

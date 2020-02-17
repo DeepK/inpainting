@@ -14,6 +14,16 @@ def get_scan(filepath):
     img = nib.load(filepath).get_fdata()
     return img
 
+def get_wmh_scan(filepath):
+    img = numpy.load(filepath)
+    # 0 -> T1, 1 -> FLAIR
+    t1 = img[:,:,:,0].T
+    flair = img[:,:,:,1].T
+    return t1, flair
+
+def get_wmh_mask(filepath):
+    return numpy.load(filepath).T
+
 def get_generators(batch_size = 1, split_number = 1, debug = False, to_count = False):
     flair_names, seg_names = get_flair_file_names()
     train_flair_names, test_flair_names, valid_flair_names,\

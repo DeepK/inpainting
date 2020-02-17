@@ -29,7 +29,7 @@ elif pretrain_type == 4: # no ROI + grid
 
 batchsize = 5
 
-for split_number in range(1,2):
+for split_number in range(1,4):
     if pretrain_model_path is not None:
         pretrain_model_path = pretrain_model_path.format(split_number)
     model = get_model(pretrain_model_path)

@@ -107,24 +107,16 @@ def __get_generator(generator, batch_size, debug, with_roi, with_superpixel):
 if __name__ == "__main__":
     from tqdm import tqdm
 
-    train, valid = get_inpainter_generators(1, 1, True, True, False, False)
+    train, valid = get_inpainter_generators(1, 1, False, True, False, False)
 
     count = 0
     for inpt, outpt in tqdm(train):
         count += 1
 
     print (count)
-    #1005 -> ROI
-    #1052 -> no ROI
-    #964 -> ROI + grid
-    #790 -> no ROI + grid
 
     count = 0
     for inpt, outpt in tqdm(valid):
         count += 1
 
     print (count)
-    #149 -> ROI
-    #188 -> no ROI
-    #148 -> ROI + grid
-    #153 -> no ROI + grid
