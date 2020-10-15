@@ -1,8 +1,3 @@
-"""
-Reads the original 3D scans!
-subhradeep.kayal@gmail.com
-Erasmus MC
-"""
 import nibabel as nib
 import numpy
 import os

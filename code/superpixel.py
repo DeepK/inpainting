@@ -1,8 +1,3 @@
-"""
-SLIC
-subhradeep.kayal@gmail.com
-Erasmus MC
-"""
 import os
 import pickle
 

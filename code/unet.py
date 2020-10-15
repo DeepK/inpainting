@@ -419,8 +419,8 @@ def DICTAVAILNETWORKS3D(size_image, option):
         return Unet3D_General(size_image, num_layers_depth=3, isDropout=True)
     elif (option=='Unet3D_Shallow_Batchnorm'):
         return Unet3D_General(size_image, num_layers_depth=3, isBatchNormalize=True)
-    elif (option=='Unet3D_Shallow_Batchnorm_2Channel'):
-        return Unet3D_General(size_image, num_layers_depth=3, isBatchNormalize=True, num_out_filters = 2)
+    elif (option=='Unet3D_Shallow_Batchnorm_2Channel_recon'):
+        return Unet3D_General(size_image, num_layers_depth=3, isBatchNormalize=True, num_out_filters = 2, activation_output = 'linear')
     else:
         return NotImplemented
 
